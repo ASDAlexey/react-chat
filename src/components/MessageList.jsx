@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Message from './Message.jsx';
 import _ from 'lodash';
 
@@ -11,8 +11,12 @@ class MessageList extends React.Component {
         };
     }
 
+    static contextTypes = {
+        firebaseRef: PropTypes.object
+    };
+
     componentWillMount() {
-        this.props.firebaseRef.database().ref('/messages').on('child_added', (msg) => {
+        this.context.firebaseRef.database().ref('/messages').on('child_added', (msg) => {
             if (!_.get(this.state.messages, 'msg.key')) {
                 let msgVal = msg.val();
                 msgVal.key = msg.key;
@@ -21,7 +25,7 @@ class MessageList extends React.Component {
             }
         });
 
-        this.props.firebaseRef.database().ref('/messages').on('child_removed', (msg) => {
+        this.context.firebaseRef.database().ref('/messages').on('child_removed', (msg) => {
             var key = msg.key;
             delete this.state.messages[key];
             this.setState({ messages: this.state.messages });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import trim from 'trim';
 
 class MessageBox extends React.Component {
@@ -8,6 +8,10 @@ class MessageBox extends React.Component {
             message: ''
         };
     }
+
+    static contextTypes = {
+        firebaseRef: PropTypes.object
+    };
 
     onChange(evt) {
         this.setState({
@@ -19,7 +23,7 @@ class MessageBox extends React.Component {
         if (evt.keyCode === 13 && trim(evt.target.value) !== '') {
             evt.preventDefault();
 
-            this.props.firebaseRef.database().ref('/messages').push({ message: this.state.message });
+            this.context.firebaseRef.database().ref('/messages').push({ message: this.state.message });
 
             this.setState({
                 message: '',
